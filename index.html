@@ -9,8 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header>
+<body>    <header>
         <nav>
             <div class="logo">
                 <span class="i-logo">i</span>
@@ -20,10 +19,11 @@
                 <li><a href="#about">À Propos</a></li>
                 <li><a href="#history">Histoire</a></li>
                 <li><a href="#game">i-Jeu</a></li>
+                <li><a href="#clicker">i-Clicker</a></li>
                 <li><a href="#gallery">i-Galerie</a></li>
             </ul>
         </nav>
-    </header>    <section id="home" class="hero">
+    </header><section id="home" class="hero">
         <div class="hero-content">
             <h1>Le Magnifique <span class="accent-i">i</span></h1>
             <p>Découvrez pourquoi cette humble lettre est la chose la plus incroyable qui existe</p>
@@ -106,8 +106,7 @@
     </section>    <section id="game" class="game-section">
         <h2>Le Défi du <span class="accent-i">i</span>-Jeu</h2>
         <p class="game-intro">Pouvez-vous attraper toutes les lettres i ? Cliquez sur autant que possible en 30 secondes !</p>
-        <div class="game-container">
-            <div class="game-stats">
+        <div class="game-container">            <div class="game-stats">
                 <div class="score">Score : <span id="score">0</span></div>
                 <div class="timer">Temps : <span id="timer">30</span>s</div>
             </div>
@@ -121,6 +120,56 @@
                     <li>Joueur 2 : 38</li>
                     <li>Joueur 3 : 35</li>
                 </ol>
+                <p class="secret-hint">Astuce : Un code secret est caché quelque part...</p>            </div>
+        </div>
+    </section>    <section id="clicker" class="clicker-section">
+        <h2>L'<span class="accent-i">i</span>-Clicker</h2>
+        <p class="clicker-intro">Cliquez sur le i pour gagner des points et débloquer des améliorations!</p>
+        <div class="clicker-container">
+            <div class="clicker-stats">
+                <div class="i-count">i Points : <span id="i-points">0</span></div>
+                <div class="i-per-second">Par seconde : <span id="i-per-second">0</span></div>
+            </div>
+            <div class="clicker-area">
+                <div id="main-i-button" class="main-i">i</div>
+            </div>
+            <div class="upgrades">
+                <h3>Améliorations</h3>
+                <div class="upgrade-items">
+                    <div class="upgrade-item" id="upgrade-cursor">
+                        <div class="upgrade-icon">👆</div>
+                        <div class="upgrade-info">
+                            <h4>Curseur Amélioré</h4>
+                            <p>+1 point par clic</p>
+                            <p class="upgrade-cost">Coût: <span id="cursor-cost">10</span> points</p>
+                        </div>
+                        <div class="upgrade-level">Niveau: <span id="cursor-level">0</span></div>
+                    </div>
+                    <div class="upgrade-item" id="upgrade-auto">
+                        <div class="upgrade-icon">⏱️</div>
+                        <div class="upgrade-info">
+                            <h4>Auto-Clicker</h4>
+                            <p>+1 point par seconde</p>
+                            <p class="upgrade-cost">Coût: <span id="auto-cost">50</span> points</p>
+                        </div>
+                        <div class="upgrade-level">Niveau: <span id="auto-level">0</span></div>
+                    </div>
+                    <div class="upgrade-item" id="upgrade-multiplier">
+                        <div class="upgrade-icon">✖️</div>
+                        <div class="upgrade-info">
+                            <h4>Multiplicateur</h4>
+                            <p>x2 points par clic</p>
+                            <p class="upgrade-cost">Coût: <span id="multiplier-cost">200</span> points</p>
+                        </div>
+                        <div class="upgrade-level">Niveau: <span id="multiplier-level">0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="achievements">
+                <h3>Succès</h3>
+                <div class="achievement-items" id="achievement-list">
+                    <!-- Achievements will be added dynamically -->
+                </div>
             </div>
         </div>
     </section>    <section id="gallery" class="gallery-section">
@@ -146,10 +195,44 @@
             <div class="gallery-item">
                 <div class="i-showcase i-decorative">i</div>
                 <p>Décoratif</p>
-            </div>
-            <div class="gallery-item">
+            </div>            <div class="gallery-item">
                 <div class="i-showcase i-minimalist">i</div>
                 <p>Minimaliste</p>
+            </div>            <div class="gallery-item">
+                <div class="i-showcase i-github">
+                    <img src="i-logo.svg" alt="GitHub Copilot i" class="svg-i">
+                </div>
+                <p>G-i-thub Cop-i-lot</p>
+            </div>
+            <div class="gallery-item">
+                <div class="i-showcase i-social">
+                    <img src="i-twitter.svg" alt="Twitter i" class="svg-i">
+                </div>
+                <p>Tw-i-tter</p>
+            </div>
+            <div class="gallery-item">
+                <div class="i-showcase i-social">
+                    <img src="i-facebook.svg" alt="Facebook i" class="svg-i">
+                </div>
+                <p>Face-i-book</p>
+            </div>
+            <div class="gallery-item">
+                <div class="i-showcase i-social">
+                    <img src="i-instagram.svg" alt="Instagram i" class="svg-i">
+                </div>
+                <p>-i-nstagram</p>
+            </div>
+            <div class="gallery-item">
+                <div class="i-showcase i-social">
+                    <img src="i-discord.svg" alt="Discord i" class="svg-i">
+                </div>
+                <p>D-i-scord</p>
+            </div>
+            <div class="gallery-item">
+                <div class="i-showcase i-social">
+                    <img src="i-skype.svg" alt="King Skype i" class="svg-i">
+                </div>
+                <p>K-i-ng of Skype</p>
             </div>
         </div>
     </section>    <footer>

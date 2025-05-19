@@ -1,11 +1,171 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Game variables
+document.addEventListener('DOMContentLoaded', function() {    // Game variables
     const gameArea = document.getElementById('game-area');
     const startButton = document.getElementById('start-game');
     const scoreDisplay = document.getElementById('score');
     const timerDisplay = document.getElementById('timer');
     const highScoresList = document.getElementById('high-scores-list');
-      // i-Wall variables
+    
+    // Konami code variables
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiCodePosition = 0;
+    let konamiCodeActivated = false;
+    
+    // Listen for keyboard input for Konami code
+    document.addEventListener('keydown', function(e) {
+        // Get the key pressed
+        const key = e.key.toLowerCase();
+        
+        // Check if it matches the expected key in the Konami code sequence
+        const expectedKey = konamiCode[konamiCodePosition].toLowerCase();
+        
+        if (key === expectedKey) {
+            // Move to the next position in the sequence
+            konamiCodePosition++;
+            
+            // If the entire sequence is entered correctly
+            if (konamiCodePosition === konamiCode.length) {
+                activateKonamiCode();
+                konamiCodePosition = 0; // Reset position
+            }
+        } else {
+            // Incorrect key, reset the position
+            konamiCodePosition = 0;
+        }
+    });
+    
+    function activateKonamiCode() {
+        if (!konamiCodeActivated) {
+            konamiCodeActivated = true;
+            
+            // Create a notification to show the cheat code was activated
+            const notification = document.createElement('div');
+            notification.textContent = '✨ Mode Super i Activé! ✨';
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.padding = '10px 20px';
+            notification.style.backgroundColor = 'rgba(74, 42, 234, 0.9)';
+            notification.style.color = 'white';
+            notification.style.borderRadius = '20px';
+            notification.style.fontWeight = 'bold';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 0 10px rgba(74, 42, 234, 0.5)';
+            
+            document.body.appendChild(notification);
+            
+            // Remove the notification after a few seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+            
+            // Apply effects to the game elements
+            document.querySelector('.game-section').style.background = 'linear-gradient(135deg, #8a2be2 0%, #4b0082 100%)';
+            document.querySelector('.game-container').style.boxShadow = '0 0 30px rgba(138, 43, 226, 0.7)';
+            
+            // If game is active, spawn a bunch of special "i"s
+            if (gameActive) {
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        spawnSpecialLetterI();
+                    }, i * 200);
+                }
+            }
+        }
+    }
+    
+    function spawnSpecialLetterI() {
+        if (!gameActive) return;
+        
+        // Create a special letter i element
+        const specialI = document.createElement('div');
+        specialI.classList.add('flying-i', 'special-i');
+        specialI.textContent = 'i';
+        
+        // Random position within the game area
+        const maxX = gameArea.clientWidth - 40;
+        const maxY = gameArea.clientHeight - 40;
+        
+        const randomX = Math.floor(Math.random() * maxX);
+        const randomY = Math.floor(Math.random() * maxY);
+        
+        // Set position and style
+        specialI.style.left = `${randomX}px`;
+        specialI.style.top = `${randomY}px`;
+        
+        // Golden special "i"
+        specialI.style.color = '#FFD700';
+        specialI.style.textShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
+        
+        // Larger size
+        specialI.style.fontSize = '40px';
+        specialI.style.fontWeight = 'bold';
+        
+        // Add animation
+        specialI.style.animation = 'pulse 1s infinite alternate';
+        
+        // Add click event to collect the special letter i
+        specialI.addEventListener('click', function() {
+            if (gameActive) {
+                collectSpecialLetterI(specialI);
+            }
+        });
+        
+        // Add to game area
+        gameArea.appendChild(specialI);
+        
+        // Set automatic removal after a delay
+        setTimeout(() => {
+            if (specialI.parentNode === gameArea) {
+                gameArea.removeChild(specialI);
+            }
+        }, 3000);
+    }
+    
+    function collectSpecialLetterI(element) {
+        // Remove the special letter i from the game area
+        gameArea.removeChild(element);
+        
+        // Award bonus points for special "i"s
+        const bonusPoints = 20;
+        score += bonusPoints;
+        
+        // Update score display
+        scoreDisplay.textContent = score;
+        
+        // Visual feedback
+        const pointsIndicator = document.createElement('div');
+        pointsIndicator.textContent = `+${bonusPoints}`;
+        pointsIndicator.style.position = 'absolute';
+        pointsIndicator.style.left = element.style.left;
+        pointsIndicator.style.top = element.style.top;
+        pointsIndicator.style.color = '#FFD700';
+        pointsIndicator.style.fontWeight = 'bold';
+        pointsIndicator.style.fontSize = '24px';
+        pointsIndicator.style.zIndex = '10';
+        pointsIndicator.style.textShadow = '0 0 5px rgba(255, 215, 0, 0.5)';
+        
+        gameArea.appendChild(pointsIndicator);
+        
+        // Animate the points indicator
+        let opacity = 1;
+        let posY = parseInt(pointsIndicator.style.top);
+        
+        const fadeInterval = setInterval(() => {
+            opacity -= 0.05;
+            posY -= 2;
+            
+            pointsIndicator.style.opacity = opacity;
+            pointsIndicator.style.top = `${posY}px`;
+            
+            if (opacity <= 0) {
+                clearInterval(fadeInterval);
+                gameArea.removeChild(pointsIndicator);
+            }
+        }, 30);
+    }
+    
+    // i-Wall variables
     const iParagraph = document.querySelector('.i-paragraph');
     
     // Interactive "i" wall
@@ -109,13 +269,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Start the game when the start button is clicked
     startButton.addEventListener('click', startGame);
-    
-    function startGame() {
+      function startGame() {
         // Reset game state
         gameArea.innerHTML = '';
         score = 0;
         timeLeft = 30;
         gameActive = true;
+        
+        // Reset Konami code state
+        konamiCodeActivated = false;
+        konamiCodePosition = 0;
+        
+        // Restore default styling if it was changed by Konami code
+        document.querySelector('.game-section').style.background = '';
+        document.querySelector('.game-container').style.boxShadow = '';
         
         // Update displays
         scoreDisplay.textContent = score;
@@ -312,4 +479,406 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // i-Clicker Game Variables
+    const mainIButton = document.getElementById('main-i-button');
+    const iPointsDisplay = document.getElementById('i-points');
+    const iPerSecondDisplay = document.getElementById('i-per-second');
+    
+    // Upgrade elements
+    const cursorUpgrade = document.getElementById('upgrade-cursor');
+    const autoUpgrade = document.getElementById('upgrade-auto');
+    const multiplierUpgrade = document.getElementById('upgrade-multiplier');
+    
+    // Upgrade cost and level displays
+    const cursorCostDisplay = document.getElementById('cursor-cost');
+    const autoCostDisplay = document.getElementById('auto-cost');
+    const multiplierCostDisplay = document.getElementById('multiplier-cost');
+    
+    const cursorLevelDisplay = document.getElementById('cursor-level');
+    const autoLevelDisplay = document.getElementById('auto-level');
+    const multiplierLevelDisplay = document.getElementById('multiplier-level');
+    
+    // Achievement list container
+    const achievementList = document.getElementById('achievement-list');
+    
+    // Game state variables
+    let iPoints = 0;
+    let pointsPerClick = 1;
+    let pointsPerSecond = 0;
+    
+    // Upgrade variables
+    let cursorLevel = 0;
+    let autoLevel = 0;
+    let multiplierLevel = 0;
+    
+    let cursorBaseCost = 10;
+    let autoBaseCost = 50;
+    let multiplierBaseCost = 200;
+    
+    // Achievements definitions
+    const achievements = [
+        {
+            id: 'achievement-first-click',
+            icon: '👆',
+            name: 'Premier i',
+            description: 'Cliquez sur le i pour la première fois',
+            requirement: () => iPoints >= 1,
+            unlocked: false
+        },
+        {
+            id: 'achievement-100-points',
+            icon: '💯',
+            name: 'Collectionneur',
+            description: 'Accumulez 100 points i',
+            requirement: () => iPoints >= 100,
+            unlocked: false
+        },
+        {
+            id: 'achievement-upgrade',
+            icon: '⬆️',
+            name: 'Amélioré',
+            description: 'Achetez votre première amélioration',
+            requirement: () => cursorLevel + autoLevel + multiplierLevel > 0,
+            unlocked: false
+        },
+        {
+            id: 'achievement-1000-points',
+            icon: '🔥',
+            name: 'i-Maître',
+            description: 'Accumulez 1000 points i',
+            requirement: () => iPoints >= 1000,
+            unlocked: false
+        },
+        {
+            id: 'achievement-10-upgrades',
+            icon: '🌟',
+            name: 'Super i-Amélioré',
+            description: 'Achetez 10 améliorations au total',
+            requirement: () => cursorLevel + autoLevel + multiplierLevel >= 10,
+            unlocked: false
+        }
+    ];
+    
+    // Load saved game if exists
+    loadGame();
+    
+    // Initialize achievements
+    initializeAchievements();
+    
+    // Click event for the main i button
+    if (mainIButton) {
+        mainIButton.addEventListener('click', () => {
+            incrementPoints(pointsPerClick);
+            createFloatingPoint(pointsPerClick);
+            checkAchievements();
+        });
+    }
+    
+    // Click events for upgrades
+    if (cursorUpgrade) {
+        cursorUpgrade.addEventListener('click', () => {
+            buyUpgrade('cursor');
+        });
+    }
+    
+    if (autoUpgrade) {
+        autoUpgrade.addEventListener('click', () => {
+            buyUpgrade('auto');
+        });
+    }
+    
+    if (multiplierUpgrade) {
+        multiplierUpgrade.addEventListener('click', () => {
+            buyUpgrade('multiplier');
+        });
+    }
+    
+    // Auto-incrementer
+    setInterval(() => {
+        if (pointsPerSecond > 0) {
+            incrementPoints(pointsPerSecond);
+            checkAchievements();
+        }
+    }, 1000);
+    
+    // Auto-save
+    setInterval(saveGame, 10000);
+    
+    // Functions
+    function incrementPoints(amount) {
+        iPoints += amount;
+        updateDisplay();
+    }
+    
+    function updateDisplay() {
+        if (iPointsDisplay) {
+            iPointsDisplay.textContent = formatNumber(iPoints);
+        }
+        if (iPerSecondDisplay) {
+            iPerSecondDisplay.textContent = formatNumber(pointsPerSecond);
+        }
+        
+        // Update upgrade buttons (enable/disable based on affordability)
+        updateUpgradeButtons();
+    }
+    
+    function updateUpgradeButtons() {
+        const cursorCost = Math.floor(cursorBaseCost * Math.pow(1.15, cursorLevel));
+        const autoCost = Math.floor(autoBaseCost * Math.pow(1.15, autoLevel));
+        const multiplierCost = Math.floor(multiplierBaseCost * Math.pow(1.15, multiplierLevel));
+        
+        if (cursorCostDisplay) {
+            cursorCostDisplay.textContent = formatNumber(cursorCost);
+        }
+        if (autoCostDisplay) {
+            autoCostDisplay.textContent = formatNumber(autoCost);
+        }
+        if (multiplierCostDisplay) {
+            multiplierCostDisplay.textContent = formatNumber(multiplierCost);
+        }
+        
+        if (cursorLevelDisplay) {
+            cursorLevelDisplay.textContent = cursorLevel;
+        }
+        if (autoLevelDisplay) {
+            autoLevelDisplay.textContent = autoLevel;
+        }
+        if (multiplierLevelDisplay) {
+            multiplierLevelDisplay.textContent = multiplierLevel;
+        }
+        
+        // Enable/disable based on affordability
+        if (cursorUpgrade) {
+            if (iPoints >= cursorCost) {
+                cursorUpgrade.classList.remove('disabled');
+            } else {
+                cursorUpgrade.classList.add('disabled');
+            }
+        }
+        
+        if (autoUpgrade) {
+            if (iPoints >= autoCost) {
+                autoUpgrade.classList.remove('disabled');
+            } else {
+                autoUpgrade.classList.add('disabled');
+            }
+        }
+        
+        if (multiplierUpgrade) {
+            if (iPoints >= multiplierCost) {
+                multiplierUpgrade.classList.remove('disabled');
+            } else {
+                multiplierUpgrade.classList.add('disabled');
+            }
+        }
+    }
+    
+    function buyUpgrade(type) {
+        let cost = 0;
+        
+        switch (type) {
+            case 'cursor':
+                cost = Math.floor(cursorBaseCost * Math.pow(1.15, cursorLevel));
+                if (iPoints >= cost) {
+                    iPoints -= cost;
+                    cursorLevel++;
+                    pointsPerClick += 1;
+                }
+                break;
+                
+            case 'auto':
+                cost = Math.floor(autoBaseCost * Math.pow(1.15, autoLevel));
+                if (iPoints >= cost) {
+                    iPoints -= cost;
+                    autoLevel++;
+                    pointsPerSecond += 1;
+                }
+                break;
+                
+            case 'multiplier':
+                cost = Math.floor(multiplierBaseCost * Math.pow(1.15, multiplierLevel));
+                if (iPoints >= cost) {
+                    iPoints -= cost;
+                    multiplierLevel++;
+                    pointsPerClick *= 2;
+                }
+                break;
+        }
+        
+        updateDisplay();
+        checkAchievements();
+        saveGame();
+    }
+    
+    function createFloatingPoint(amount) {
+        if (!mainIButton) return;
+        
+        const floatingPoint = document.createElement('div');
+        floatingPoint.textContent = '+' + formatNumber(amount);
+        floatingPoint.className = 'floating-point';
+        
+        // Random offset to make multiple points appear at different positions
+        const offsetX = Math.random() * 60 - 30;
+        const offsetY = Math.random() * 20 - 10;
+        
+        floatingPoint.style.left = `calc(50% + ${offsetX}px)`;
+        floatingPoint.style.top = `calc(50% + ${offsetY}px)`;
+        
+        mainIButton.parentNode.appendChild(floatingPoint);
+        
+        // Remove after animation completes
+        setTimeout(() => {
+            if (floatingPoint.parentNode) {
+                floatingPoint.parentNode.removeChild(floatingPoint);
+            }
+        }, 1000);
+    }
+    
+    function initializeAchievements() {
+        if (!achievementList) return;
+        
+        achievementList.innerHTML = '';
+        
+        achievements.forEach(achievement => {
+            const achievementEl = document.createElement('div');
+            achievementEl.id = achievement.id;
+            achievementEl.className = 'achievement-item' + (achievement.unlocked ? ' unlocked' : '');
+            
+            achievementEl.innerHTML = `
+                <div class="achievement-icon">${achievement.icon}</div>
+                <div class="achievement-info">
+                    <h4>${achievement.name}</h4>
+                    <p>${achievement.description}</p>
+                </div>
+            `;
+            
+            achievementList.appendChild(achievementEl);
+        });
+    }
+    
+    function checkAchievements() {
+        let newUnlocks = false;
+        
+        achievements.forEach(achievement => {
+            if (!achievement.unlocked && achievement.requirement()) {
+                achievement.unlocked = true;
+                newUnlocks = true;
+                
+                const achievementEl = document.getElementById(achievement.id);
+                if (achievementEl) {
+                    achievementEl.classList.add('unlocked');
+                    
+                    // Create a notification
+                    createAchievementNotification(achievement);
+                }
+            }
+        });
+        
+        if (newUnlocks) {
+            saveGame();
+        }
+    }
+    
+    function createAchievementNotification(achievement) {
+        const notification = document.createElement('div');
+        notification.className = 'achievement-notification';
+        notification.innerHTML = `
+            <div class="notification-icon">${achievement.icon}</div>
+            <div class="notification-content">
+                <h4>Succès débloqué!</h4>
+                <p>${achievement.name}</p>
+            </div>
+        `;
+        
+        // Style the notification
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.right = '20px';
+        notification.style.backgroundColor = 'rgba(74, 42, 234, 0.9)';
+        notification.style.color = 'white';
+        notification.style.padding = '10px 20px';
+        notification.style.borderRadius = '8px';
+        notification.style.display = 'flex';
+        notification.style.alignItems = 'center';
+        notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+        notification.style.transform = 'translateX(120%)';
+        notification.style.transition = 'transform 0.3s ease';
+        notification.style.zIndex = '1000';
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Remove after delay
+        setTimeout(() => {
+            notification.style.transform = 'translateX(120%)';
+            
+            // Remove from DOM after animation
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    function formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        } else {
+            return Math.floor(num);
+        }
+    }
+    
+    function saveGame() {
+        const gameData = {
+            iPoints,
+            pointsPerClick,
+            pointsPerSecond,
+            cursorLevel,
+            autoLevel,
+            multiplierLevel,
+            achievements: achievements.map(a => ({ id: a.id, unlocked: a.unlocked }))
+        };
+        
+        localStorage.setItem('iClickerSave', JSON.stringify(gameData));
+    }
+    
+    function loadGame() {
+        const savedData = localStorage.getItem('iClickerSave');
+        
+        if (savedData) {
+            try {
+                const gameData = JSON.parse(savedData);
+                
+                iPoints = gameData.iPoints || 0;
+                pointsPerClick = gameData.pointsPerClick || 1;
+                pointsPerSecond = gameData.pointsPerSecond || 0;
+                
+                cursorLevel = gameData.cursorLevel || 0;
+                autoLevel = gameData.autoLevel || 0;
+                multiplierLevel = gameData.multiplierLevel || 0;
+                
+                // Restore achievements
+                if (gameData.achievements) {
+                    gameData.achievements.forEach(savedAchievement => {
+                        const achievement = achievements.find(a => a.id === savedAchievement.id);
+                        if (achievement) {
+                            achievement.unlocked = savedAchievement.unlocked;
+                        }
+                    });
+                }
+                
+                updateDisplay();
+            } catch (error) {
+                console.error('Error loading saved game', error);
+            }
+        }
+    }
 });
